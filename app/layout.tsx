@@ -56,27 +56,13 @@ export const metadata: Metadata = {
     title: 'TunerLink — Find Your Performance Specialist',
     description:
       'Verified performance tuning shops across Central Florida. Book direct, pay securely, get the build you want.',
-    images: [
-      {
-        url: '/og-image.png',
-        width: 1200,
-        height: 630,
-        alt: 'TunerLink — Performance shop marketplace',
-      },
-    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'TunerLink — Find Your Performance Specialist',
     description:
       'Verified performance tuning shops across Central Florida. Book direct, pay securely.',
-    images: ['/og-image.png'],
     creator: '@tunerlink',
-  },
-  icons: {
-    icon: '/favicon.ico',
-    shortcut: '/favicon.ico',
-    apple: '/apple-touch-icon.png',
   },
   manifest: '/site.webmanifest',
   robots: {

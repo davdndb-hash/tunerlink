@@ -63,6 +63,13 @@ export default function ListShopPage() {
       setError(error.message)
       setLoading(false)
     } else {
+      // Fire-and-forget: send confirmation to applicant + notify admin
+      fetch('/api/email/shop-application', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.toLowerCase().trim() }),
+      }).catch(() => {})
+
       setSubmitted(true)
     }
   }

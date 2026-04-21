@@ -147,6 +147,14 @@ function WaitlistSection() {
         .upsert(payload, { onConflict: 'email' })
 
       if (error) throw error
+
+      // Fire-and-forget welcome email (no await, don't block UX on email)
+      fetch('/api/email/waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: payload.email }),
+      }).catch(() => {})
+
       setStatus('sent')
     } catch (err: any) {
       setErrorMsg(err?.message || 'Something went wrong. Please try again.')
