@@ -31,5 +31,5 @@ export function calcApplicationFee(amountCents: number): number {
  * Site URL used for Stripe redirect return URLs.
  */
 export function siteUrl(): string {
-  return process.env.NEXT_PUBLIC_SITE_URL || 'https://tunerlink.com'
+  return process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_APP_URL || 'https://tunerlink.com'
 }

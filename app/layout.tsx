@@ -14,7 +14,7 @@ const mono = Share_Tech_Mono({
   variable: '--font-mono',
 })
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://tunerlink.com'
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_APP_URL || 'https://tunerlink.com'
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

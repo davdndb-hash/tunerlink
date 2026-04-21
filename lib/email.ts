@@ -11,7 +11,7 @@ if (!apiKey) {
 
 export const resend = apiKey ? new Resend(apiKey) : null
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://tunerlink.com'
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_APP_URL || 'https://tunerlink.com'
 
 /**
  * Wrap content in TunerLink-branded HTML shell.
