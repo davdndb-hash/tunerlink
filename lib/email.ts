@@ -158,6 +158,65 @@ export async function notifyAdminNewApplication(applicant: {
 }
 
 /**
+ * Notify an applicant that their shop was approved.
+ * Includes a claim link they follow to sign up and take ownership of the listing.
+ */
+export async function sendShopApprovalNotification(opts: {
+  to: string
+  ownerName: string
+  shopName: string
+  claimUrl: string
+}) {
+  if (!resend) return { skipped: true }
+  const firstName = opts.ownerName.split(' ')[0] || 'there'
+  return resend.emails.send({
+    from: FROM,
+    to: opts.to,
+    replyTo: REPLY_TO,
+    subject: `${opts.shopName} is approved — claim your TunerLink profile`,
+    html: shell({
+      preheader: `${opts.shopName} was approved. Sign up to claim your profile and start receiving bookings.`,
+      heading: 'You\u2019re in.',
+      body: `
+        <p>Hey ${firstName} — <strong style="color:#f4f0eb;">${opts.shopName}</strong> just got approved on TunerLink.</p>
+        <p>Next step is claiming your profile so you can set services, pricing, availability, and connect Stripe for payouts. Takes about 10 minutes.</p>
+        <p>Click the button below to sign up with this same email — your listing will link automatically.</p>
+      `,
+      ctaLabel: 'Claim Your Profile',
+      ctaHref: opts.claimUrl,
+    }),
+  })
+}
+
+/**
+ * Notify an applicant that their shop application was rejected.
+ */
+export async function sendShopRejectionNotification(opts: {
+  to: string
+  ownerName: string
+  shopName: string
+  reason?: string | null
+}) {
+  if (!resend) return { skipped: true }
+  const firstName = opts.ownerName.split(' ')[0] || 'there'
+  return resend.emails.send({
+    from: FROM,
+    to: opts.to,
+    replyTo: REPLY_TO,
+    subject: `Update on your TunerLink application`,
+    html: shell({
+      preheader: `An update on your ${opts.shopName} application.`,
+      heading: 'Application update.',
+      body: `
+        <p>Hey ${firstName} — thanks for applying to list <strong style="color:#f4f0eb;">${opts.shopName}</strong> on TunerLink.</p>
+        <p>We weren\u2019t able to approve your application at this time.${opts.reason ? ` <br><br><em style="color:#bbb;">Reason: ${opts.reason}</em>` : ''}</p>
+        <p>If you think this was a mistake or your situation has changed, reply to this email and we\u2019ll take another look.</p>
+      `,
+    }),
+  })
+}
+
+/**
  * Notify a customer that their booking was created.
  */
 export async function sendBookingCreated(opts: {

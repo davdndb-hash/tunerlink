@@ -78,11 +78,25 @@ export default function PrivacyPage() {
             Depending on where you live, you may have rights to access, correct, or delete the personal information we hold about you, and to opt out of certain processing. To exercise these rights, email <a href="mailto:privacy@tunerlink.com" style={{ color: '#ff2233' }}>privacy@tunerlink.com</a>. We will verify your request and respond within the time required by applicable law.
           </Section>
 
-          <Section title="10. Changes to This Policy">
+          <Section title="10. Cookies and Similar Technologies">
+            We use cookies and similar technologies to keep you signed in, remember your preferences, understand how the Service is used, and secure our systems. You can disable cookies through your browser settings, but some parts of the Service may not work without them. We do not use cookies for cross-site behavioral advertising.
+            <br /><br />
+            <strong style={{ color: 'var(--white)' }}>Categories we use:</strong> strictly necessary (authentication, CSRF protection), functional (UI preferences), and analytics (aggregated, first-party usage data). We do not use third-party advertising cookies.
+          </Section>
+
+          <Section title="11. International Data Transfers">
+            TunerLink is based in the United States. If you access the Service from outside the U.S., your information will be transferred to, stored, and processed in the U.S. We rely on appropriate safeguards for international transfers, including standard contractual clauses where required by law.
+          </Section>
+
+          <Section title="12. Do Not Track">
+            Some browsers transmit &ldquo;Do Not Track&rdquo; signals. Because there is no industry standard for how to interpret these signals, we do not currently respond to them. We describe our actual data collection and sharing practices in this Policy regardless of DNT signals.
+          </Section>
+
+          <Section title="13. Changes to This Policy">
             We may update this Policy from time to time. We will post the updated version with a new &ldquo;Last updated&rdquo; date and, for material changes, notify registered users by email or in-app notice.
           </Section>
 
-          <Section title="11. Contact">
+          <Section title="14. Contact">
             Questions or concerns? Email <a href="mailto:privacy@tunerlink.com" style={{ color: '#ff2233' }}>privacy@tunerlink.com</a>.
           </Section>
         </div>

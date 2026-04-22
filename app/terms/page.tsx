@@ -78,11 +78,31 @@ export default function TermsPage() {
             Any dispute arising out of these Terms or your use of the Service shall be resolved in the state or federal courts located in Hillsborough County, Florida. You and TunerLink each waive any right to a jury trial or class action.
           </Section>
 
-          <Section title="14. Changes to These Terms">
+          <Section title="14. Indemnification">
+            You agree to indemnify, defend, and hold harmless TunerLink LLC, its officers, directors, employees, and agents from and against any claims, liabilities, damages, losses, and expenses (including reasonable attorneys&rsquo; fees) arising out of or in any way connected with (a) your use of the Service, (b) your violation of these Terms, (c) your violation of any rights of another party, or (d) any dispute between you and another user of the Service.
+          </Section>
+
+          <Section title="15. Force Majeure">
+            TunerLink is not liable for any failure or delay in performance caused by circumstances beyond our reasonable control, including acts of God, natural disasters, war, terrorism, civil unrest, government action, labor disputes, or failures of third-party service providers (including Stripe, Supabase, Vercel, and Resend).
+          </Section>
+
+          <Section title="16. Severability; Entire Agreement; Assignment">
+            If any provision of these Terms is held to be invalid or unenforceable, the remaining provisions will remain in full effect. These Terms, together with our Privacy Policy, constitute the entire agreement between you and TunerLink regarding the Service and supersede any prior agreements. You may not assign or transfer these Terms without our prior written consent. We may assign these Terms at any time without notice.
+          </Section>
+
+          <Section title="17. Electronic Communications">
+            By using the Service, you consent to receive communications from us electronically (email, in-app notifications, SMS where you have opted in). You agree that all agreements, notices, disclosures, and other communications we provide electronically satisfy any legal requirement that such communications be in writing.
+          </Section>
+
+          <Section title="18. Limitation Period">
+            Any claim or cause of action you have arising out of or related to the Service or these Terms must be filed within one (1) year after such claim or cause of action arose, or be forever barred.
+          </Section>
+
+          <Section title="19. Changes to These Terms">
             We may update these Terms at any time. We will notify registered users of material changes. Continued use of the Service after a change takes effect constitutes acceptance of the revised Terms.
           </Section>
 
-          <Section title="15. Contact">
+          <Section title="20. Contact">
             Questions about these Terms? Email <a href="mailto:hello@tunerlink.com" style={{ color: '#ff2233' }}>hello@tunerlink.com</a>.
           </Section>
         </div>

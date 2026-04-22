@@ -44,6 +44,7 @@ export default function DashboardPage() {
   }
 
   const isShop = profile?.role === 'shop'
+  const isAdmin = profile?.role === 'admin'
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--black)', color: 'var(--white)' }}>
@@ -73,7 +74,30 @@ export default function DashboardPage() {
           </em>
         </h1>
 
+        {isAdmin && <AdminPanel />}
         {isShop ? <ShopDashboard profile={profile} /> : <CustomerDashboard profile={profile} />}
+      </div>
+    </div>
+  )
+}
+
+function AdminPanel() {
+  return (
+    <div style={{ marginBottom: 48 }}>
+      <div className="label-tl" style={{ color: '#ff2233' }}>Admin</div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1, background: 'var(--border)', border: '1px solid #ff2233' }}>
+        {[
+          { icon: '📝', label: 'Applications', sub: 'Review pending shop applications', href: '/dashboard/admin/applications', cta: 'Review Queue' },
+          { icon: '🏪', label: 'Shops', sub: 'Manage all shop listings', href: '/shops', cta: 'View Shops' },
+          { icon: '📊', label: 'Activity', sub: 'Bookings, payments, disputes', href: '/dashboard/bookings', cta: 'View Activity' },
+        ].map(card => (
+          <div key={card.label} style={{ background: 'var(--dark)', padding: '32px 28px' }}>
+            <div style={{ fontSize: 32, marginBottom: 12 }}>{card.icon}</div>
+            <div style={{ fontWeight: 700, fontSize: 16, textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 6 }}>{card.label}</div>
+            <div style={{ color: 'var(--grey)', fontSize: 12, marginBottom: 18, lineHeight: 1.6 }}>{card.sub}</div>
+            <Link href={card.href} className="btn-tl btn-red" style={{ padding: '9px 18px', fontSize: 10 }}>{card.cta}</Link>
+          </div>
+        ))}
       </div>
     </div>
   )
