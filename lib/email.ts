@@ -297,3 +297,126 @@ export async function sendShopBookingNotification(opts: {
     }),
   })
 }
+
+/**
+ * Notify a customer that their booking request was accepted by the shop.
+ * Includes a CTA to pay the deposit.
+ */
+export async function sendBookingAccepted(opts: {
+  to: string
+  customerName?: string | null
+  shopName: string
+  serviceName: string
+  bookingDate: string
+  bookingTime?: string | null
+  bookingId: string
+  depositAmount: number | string
+}) {
+  if (!resend) return { skipped: true }
+  const firstName = opts.customerName?.split(' ')[0] || 'there'
+  const dateStr = new Date(opts.bookingDate).toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  })
+  const dep = typeof opts.depositAmount === 'number'
+    ? opts.depositAmount.toFixed(2)
+    : Number(opts.depositAmount).toFixed(2)
+  return resend.emails.send({
+    from: FROM,
+    to: opts.to,
+    replyTo: REPLY_TO,
+    subject: `${opts.shopName} accepted your booking — pay deposit to confirm`,
+    html: shell({
+      preheader: `${opts.shopName} accepted your request. Pay the deposit to lock in the slot.`,
+      heading: 'Request accepted.',
+      body: `
+        <p>Good news ${firstName} — <strong style="color:#f4f0eb;">${opts.shopName}</strong> accepted your booking.</p>
+        <p style="background:#131313;border:1px solid rgba(255,255,255,0.07);padding:20px;margin:24px 0;">
+          <strong style="color:#f4f0eb;">${opts.serviceName}</strong><br>
+          ${dateStr}${opts.bookingTime ? ` &middot; ${opts.bookingTime}` : ''}<br>
+          <span style="color:#777;">Deposit due: $${dep}</span>
+        </p>
+        <p>Pay the deposit now to lock in your slot. The remainder is paid in person when work is complete.</p>
+      `,
+      ctaLabel: 'Pay Deposit',
+      ctaHref: `${SITE_URL}/dashboard/bookings/${opts.bookingId}`,
+    }),
+  })
+}
+
+/**
+ * Notify a shop owner that the customer cancelled a booking before it started.
+ */
+export async function sendShopBookingCancelledByCustomer(opts: {
+  to: string
+  shopName: string
+  customerName?: string | null
+  serviceName: string
+  bookingDate?: string | null
+  bookingTime?: string | null
+  reason?: string | null
+}) {
+  if (!resend) return { skipped: true }
+  const dateStr = opts.bookingDate
+    ? new Date(opts.bookingDate).toLocaleDateString('en-US', {
+        weekday: 'long',
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric',
+      })
+    : 'TBD'
+  return resend.emails.send({
+    from: FROM,
+    to: opts.to,
+    replyTo: REPLY_TO,
+    subject: `Booking cancelled — ${opts.serviceName}`,
+    html: shell({
+      preheader: `${opts.customerName || 'A customer'} cancelled a booking at ${opts.shopName}.`,
+      heading: 'Booking cancelled.',
+      body: `
+        <p><strong style="color:#f4f0eb;">${opts.customerName || 'The customer'}</strong> cancelled their booking at <strong style="color:#f4f0eb;">${opts.shopName}</strong>.</p>
+        <p style="background:#131313;border:1px solid rgba(255,255,255,0.07);padding:20px;margin:24px 0;">
+          <strong style="color:#f4f0eb;">${opts.serviceName}</strong><br>
+          ${dateStr}${opts.bookingTime ? ` &middot; ${opts.bookingTime}` : ''}
+        </p>
+        ${opts.reason ? `<p style="color:#bbb;"><em>Customer note: ${opts.reason}</em></p>` : ''}
+        <p>The slot is open again. No further action required.</p>
+      `,
+      ctaLabel: 'Open Dashboard',
+      ctaHref: `${SITE_URL}/dashboard/bookings`,
+    }),
+  })
+}
+
+/**
+ * Notify a customer that their booking request was declined.
+ */
+export async function sendBookingDeclined(opts: {
+  to: string
+  customerName?: string | null
+  shopName: string
+  serviceName: string
+  reason?: string | null
+}) {
+  if (!resend) return { skipped: true }
+  const firstName = opts.customerName?.split(' ')[0] || 'there'
+  return resend.emails.send({
+    from: FROM,
+    to: opts.to,
+    replyTo: REPLY_TO,
+    subject: `${opts.shopName} couldn't take your booking`,
+    html: shell({
+      preheader: `${opts.shopName} declined the request — try another date or shop.`,
+      heading: 'Request declined.',
+      body: `
+        <p>Hey ${firstName} — unfortunately <strong style="color:#f4f0eb;">${opts.shopName}</strong> couldn't take your booking for <strong style="color:#f4f0eb;">${opts.serviceName}</strong>.</p>
+        ${opts.reason ? `<p style="background:#131313;border:1px solid rgba(255,255,255,0.07);padding:20px;margin:24px 0;color:#bbb;">${opts.reason}</p>` : ''}
+        <p>You haven't been charged. Browse other verified tuners in your area and try again.</p>
+      `,
+      ctaLabel: 'Find Another Shop',
+      ctaHref: `${SITE_URL}/shops`,
+    }),
+  })
+}

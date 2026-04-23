@@ -194,8 +194,8 @@ export default function ShopDetailPage() {
             </>
           ) : (
             <>
-              <Link href={`/auth/login?next=/shops/${shop.id}`} className="btn-tl btn-red" style={{ padding: '14px 32px', fontSize: 11 }}>
-                Sign In to Book
+              <Link href={`/shops/${shop.id}/book`} className="btn-tl btn-red" style={{ padding: '14px 32px', fontSize: 11 }}>
+                Book Now
               </Link>
               {shop.phone && (
                 <a href={`tel:${shop.phone.replace(/\D/g, '')}`} className="btn-tl" style={{ padding: '14px 32px', fontSize: 11 }}>

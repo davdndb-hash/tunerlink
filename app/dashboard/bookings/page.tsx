@@ -128,7 +128,10 @@ function BookingRow({ booking, role }: { booking: Booking; role: 'customer' | 's
   const color = statusColor[booking.status || 'pending'] || 'var(--grey)'
 
   return (
-    <div style={{ background: 'var(--dark)', padding: '24px 28px', display: 'grid', gridTemplateColumns: '2fr 1fr 1fr auto', gap: 24, alignItems: 'center' }}>
+    <Link
+      href={`/dashboard/bookings/${booking.id}`}
+      style={{ background: 'var(--dark)', padding: '24px 28px', display: 'grid', gridTemplateColumns: '2fr 1fr 1fr auto', gap: 24, alignItems: 'center', textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}
+    >
       <div>
         <div style={{ fontWeight: 700, fontSize: 16, textTransform: 'uppercase', marginBottom: 4 }}>
           {booking.shop?.name || 'Shop'} {role === 'shop' && booking.customer?.full_name && `· ${booking.customer.full_name}`}
@@ -147,7 +150,7 @@ function BookingRow({ booking, role }: { booking: Booking; role: 'customer' | 's
       <div style={{ color: 'var(--white)', fontWeight: 600, fontSize: 16 }}>
         {booking.total_amount ? `$${Number(booking.total_amount).toLocaleString()}` : '—'}
       </div>
-    </div>
+    </Link>
   )
 }
 
