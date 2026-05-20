@@ -92,7 +92,7 @@ export default function HomePage() {
               Find Your<br />
               <em style={{ fontStyle: 'normal', background: 'linear-gradient(135deg,#ff2233,#ff6600)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', display: 'block', filter: 'drop-shadow(0 0 40px rgba(255,34,51,.4))' }}>Specialist.</em>
             </h1>
-            <p style={{ fontSize: 16, fontWeight: 300, color: 'var(--grey)', maxWidth: 500, lineHeight: 1.75, marginBottom: 44 }}>
+            <p style={{ fontSize: 24, fontWeight: 600, color: 'var(--lgrey)', maxWidth: 560, lineHeight: 1.75, marginBottom: 44 }}>
               The premier platform connecting car owners with verified local performance shops — matched by specialty, vehicle, and location.
             </p>
             <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
@@ -138,7 +138,7 @@ export default function HomePage() {
                 {panel.tag}
               </div>
               <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 'clamp(64px,9vw,128px)', lineHeight: .88, textTransform: 'uppercase', marginBottom: 28, letterSpacing: '.01em', whiteSpace: 'pre-line' }}>{panel.title}</div>
-              <p style={{ fontSize: 15, color: 'var(--grey)', lineHeight: 1.82, maxWidth: 400, marginBottom: 44 }}>{panel.desc}</p>
+              <p style={{ fontSize: 22, fontWeight: 600, color: 'var(--lgrey)', lineHeight: 1.82, maxWidth: 440, marginBottom: 44 }}>{panel.desc}</p>
               <ul style={{ listStyle: 'none', padding: 0, marginBottom: 44, display: 'flex', flexDirection: 'column', gap: 11 }}>
                 {panel.items.map(item => (
                   <li key={item} style={{ fontFamily: 'monospace', fontSize: 11, letterSpacing: '.15em', color: 'var(--lgrey)', display: 'flex', alignItems: 'center', gap: 12 }}>
