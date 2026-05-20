@@ -34,8 +34,10 @@ export default function Nav() {
       zIndex: 500,
       padding: opaque ? '14px 52px' : '22px 52px',
       display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-      background: opaque ? 'rgba(8,8,8,.97)' : 'transparent',
-      backdropFilter: opaque ? 'blur(16px)' : 'none',
+      background: opaque
+        ? 'rgba(8,8,8,.97)'
+        : 'linear-gradient(180deg, rgba(8,8,8,0.82) 0%, rgba(8,8,8,0.0) 100%)',
+      backdropFilter: 'blur(10px)',
       borderBottom: opaque ? '1px solid var(--border)' : '1px solid transparent',
       transition: 'all .3s',
     }}>
