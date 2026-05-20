@@ -25,7 +25,7 @@ body {
 }
 
 .btn-tl {
-  font-size: 11px;
+  font-size: 13px;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   padding: 12px 28px;
@@ -64,10 +64,10 @@ body {
 .input-tl::placeholder { color: var(--grey); }
 
 .tag-tl {
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  padding: 4px 10px;
+  padding: 5px 12px;
   border: 1px solid var(--border);
   color: var(--grey);
   cursor: pointer;
@@ -79,7 +79,7 @@ body {
 .tag-tl.active { border-color: #ff2233; color: #ff2233; background: rgba(255,34,51,0.08); }
 
 .label-tl {
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 0.3em;
   text-transform: uppercase;
   color: #ff2233;
@@ -97,7 +97,7 @@ body {
 }
 
 .nav-link {
-  font-size: 11px;
+  font-size: 13px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--grey);

@@ -92,7 +92,7 @@ export default function ShopsPage() {
           Central Florida<br />
           <em style={{ fontStyle: 'normal', background: 'linear-gradient(135deg, #ff2233, #ff6600)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Performance Shops.</em>
         </h1>
-        <p style={{ color: 'var(--grey)', fontSize: 15, maxWidth: 620, lineHeight: 1.8, marginBottom: 16 }}>
+        <p style={{ color: 'var(--grey)', fontSize: 18, maxWidth: 620, lineHeight: 1.8, marginBottom: 16 }}>
           {loading ? 'Loading directory...' : `${shops.length} performance shops across the Tampa to Port St. Lucie corridor — tagged by specialty so you find the right one for your build.`}
         </p>
 
@@ -175,18 +175,18 @@ export default function ShopsPage() {
           Claim or Add.<br />
           <em style={{ fontStyle: 'normal', background: 'linear-gradient(135deg, #ff2233, #ff6600)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>It&rsquo;s Free.</em>
         </h2>
-        <p style={{ color: 'var(--grey)', fontSize: 15, maxWidth: 480, margin: '0 auto 32px', lineHeight: 1.8 }}>
+        <p style={{ color: 'var(--grey)', fontSize: 18, maxWidth: 480, margin: '0 auto 32px', lineHeight: 1.8 }}>
           Founding shops get verified status, featured placement, and direct input on how the platform gets built.
         </p>
-        <Link href="/list-shop" className="btn-tl btn-red" style={{ padding: '16px 44px', fontSize: 12 }}>Apply Now — Free</Link>
+        <Link href="/list-shop" className="btn-tl btn-red" style={{ padding: '16px 44px', fontSize: 14 }}>Apply Now — Free</Link>
       </section>
 
       {/* FOOTER */}
       <footer style={{ padding: '32px 52px', background: 'var(--black)', borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span style={{ fontFamily: 'var(--font-mono), monospace', fontSize: 10, color: 'var(--grey)', letterSpacing: '0.2em' }}>© 2025 TUNERLINK LLC</span>
+        <span style={{ fontFamily: 'var(--font-mono), monospace', fontSize: 12, color: 'var(--grey)', letterSpacing: '0.2em' }}>© 2025 TUNERLINK LLC</span>
         <div style={{ display: 'flex', gap: 24 }}>
           {[['Terms','/terms'],['Privacy','/privacy'],['Contact','/contact']].map(([l, h]) => (
-            <Link key={l} href={h} style={{ fontFamily: 'var(--font-mono), monospace', fontSize: 10, color: 'var(--grey)', letterSpacing: '0.15em', textDecoration: 'none', textTransform: 'uppercase' }}>{l}</Link>
+            <Link key={l} href={h} style={{ fontFamily: 'var(--font-mono), monospace', fontSize: 12, color: 'var(--grey)', letterSpacing: '0.15em', textDecoration: 'none', textTransform: 'uppercase' }}>{l}</Link>
           ))}
         </div>
       </footer>
@@ -202,50 +202,50 @@ function ShopCard({ shop }: { shop: Shop }) {
 
       {/* Status row */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', minHeight: 18 }}>
-        <span style={{ fontFamily: 'var(--font-mono), monospace', fontSize: 9, letterSpacing: '0.28em', color: '#ff2233', textTransform: 'uppercase' }}>
+        <span style={{ fontFamily: 'var(--font-mono), monospace', fontSize: 11, letterSpacing: '0.28em', color: '#ff2233', textTransform: 'uppercase' }}>
           {shop.city}{shop.state ? `, ${shop.state}` : ''}
         </span>
-        <span style={{ fontFamily: 'var(--font-mono), monospace', fontSize: 11, color: 'var(--lgrey)' }}>
-          <StarRating rating={Number(shop.rating) || 0} /> {Number(shop.rating || 0).toFixed(1)} <span style={{ color: 'var(--grey)', fontSize: 10 }}>({shop.review_count ?? 0})</span>
+        <span style={{ fontFamily: 'var(--font-mono), monospace', fontSize: 13, color: 'var(--lgrey)' }}>
+          <StarRating rating={Number(shop.rating) || 0} /> {Number(shop.rating || 0).toFixed(1)} <span style={{ color: 'var(--grey)', fontSize: 12 }}>({shop.review_count ?? 0})</span>
         </span>
       </div>
 
       {/* Name + verification badges */}
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, flexWrap: 'wrap' }}>
-        <div style={{ fontWeight: 700, fontSize: 18, textTransform: 'uppercase', letterSpacing: '0.03em', lineHeight: 1.1, color: 'var(--white)', flex: 1 }}>{shop.name}</div>
+        <div style={{ fontWeight: 800, fontSize: 22, textTransform: 'uppercase', letterSpacing: '0.03em', lineHeight: 1.1, color: 'var(--white)', flex: 1 }}>{shop.name}</div>
       </div>
 
       <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
         {shop.is_verified && (
-          <span style={{ fontFamily: 'var(--font-mono), monospace', fontSize: 8, padding: '3px 7px', border: '1px solid #1D9E75', color: '#1D9E75', letterSpacing: '0.2em', textTransform: 'uppercase' }}>Verified</span>
+          <span style={{ fontFamily: 'var(--font-mono), monospace', fontSize: 10, padding: '4px 8px', border: '1px solid #1D9E75', color: '#1D9E75', letterSpacing: '0.2em', textTransform: 'uppercase' }}>Verified</span>
         )}
         {unclaimed && (
-          <span style={{ fontFamily: 'var(--font-mono), monospace', fontSize: 8, padding: '3px 7px', border: '1px solid var(--grey)', color: 'var(--grey)', letterSpacing: '0.2em', textTransform: 'uppercase' }}>Unclaimed</span>
+          <span style={{ fontFamily: 'var(--font-mono), monospace', fontSize: 10, padding: '4px 8px', border: '1px solid var(--grey)', color: 'var(--grey)', letterSpacing: '0.2em', textTransform: 'uppercase' }}>Unclaimed</span>
         )}
         {shop.badge_dyno_onsite && (
-          <span style={{ fontFamily: 'var(--font-mono), monospace', fontSize: 8, padding: '3px 7px', border: '1px solid var(--lgrey)', color: 'var(--lgrey)', letterSpacing: '0.2em', textTransform: 'uppercase' }}>Dyno On-Site</span>
+          <span style={{ fontFamily: 'var(--font-mono), monospace', fontSize: 10, padding: '4px 8px', border: '1px solid var(--lgrey)', color: 'var(--lgrey)', letterSpacing: '0.2em', textTransform: 'uppercase' }}>Dyno On-Site</span>
         )}
       </div>
 
       {/* Description */}
-      <p style={{ fontSize: 13, color: 'var(--grey)', lineHeight: 1.7, flexGrow: 1 }}>
+      <p style={{ fontSize: 16, color: 'var(--lgrey)', lineHeight: 1.7, flexGrow: 1 }}>
         {shop.description || 'Shop profile coming soon.'}
       </p>
 
       {/* Specialty tags */}
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
         {(shop.specialties || []).slice(0, 4).map(tag => (
-          <span key={tag} className="tag-tl" style={{ fontSize: 9, padding: '3px 8px' }}>{tag}</span>
+          <span key={tag} className="tag-tl" style={{ fontSize: 11, padding: '4px 10px' }}>{tag}</span>
         ))}
       </div>
 
       {/* Phone + CTA */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 4, gap: 8 }}>
-        <span style={{ fontFamily: 'var(--font-mono), monospace', fontSize: 10, color: 'var(--lgrey)', letterSpacing: '0.1em' }}>📞 {shop.phone || 'Contact via TunerLink'}</span>
+        <span style={{ fontFamily: 'var(--font-mono), monospace', fontSize: 12, color: 'var(--lgrey)', letterSpacing: '0.1em' }}>📞 {shop.phone || 'Contact via TunerLink'}</span>
         <Link
           href={`/shops/${shop.id}`}
           className="btn-tl btn-red"
-          style={{ padding: '8px 18px', fontSize: 10 }}
+          style={{ padding: '9px 20px', fontSize: 12 }}
         >
           View Shop
         </Link>
