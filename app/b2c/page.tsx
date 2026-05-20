@@ -8,23 +8,6 @@ export default function B2CPage() {
   return (
     <div style={{ minHeight: '100vh', background: 'var(--black)', color: 'var(--white)' }}>
 
-      <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 52px', borderBottom: '1px solid var(--border)', background: 'rgba(8,8,8,.97)', position: 'sticky', top: 0, zIndex: 500, backdropFilter: 'blur(16px)' }}>
-        <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none', fontSize: 22, fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: 'var(--white)' }}>
-          <div style={{ width: 32, height: 32, border: '2px solid #ff2233', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, color: '#ff2233' }}>TL</div>
-          TUNER<em style={{ fontStyle: 'normal', color: '#ff2233' }}>LINK</em>
-        </Link>
-        <div style={{ display: 'flex', gap: 40 }}>
-          <Link href="/shops" className="nav-link" style={{ color: 'var(--white)' }}>Find a Shop</Link>
-          <Link href="/features" className="nav-link">Features</Link>
-          <Link href="/about" className="nav-link">About</Link>
-          <Link href="/list-shop" className="nav-link">List My Shop</Link>
-        </div>
-        <div style={{ display: 'flex', gap: 12 }}>
-          <Link href="/auth/login" className="btn-tl" style={{ padding: '10px 22px', fontSize: 11 }}>Sign In</Link>
-          <Link href="/auth/signup" className="btn-tl btn-red" style={{ padding: '10px 22px', fontSize: 11 }}>Get Started</Link>
-        </div>
-      </nav>
-
       <section style={{ padding: '100px 52px 80px', background: 'var(--dark)', borderBottom: '1px solid var(--border)', position: 'relative', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse 60% 80% at 20% 50%,rgba(255,34,51,.12),transparent)', pointerEvents: 'none' }} />
         <div style={{ position: 'relative', zIndex: 1 }}>

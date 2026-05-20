@@ -50,13 +50,6 @@ export default function ContactPage() {
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--black)', color: 'var(--white)' }}>
-      <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 52px', background: 'rgba(8,8,8,0.97)', borderBottom: '1px solid var(--border)', position: 'sticky', top: 0, zIndex: 500 }}>
-        <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
-          <div style={{ width: 32, height: 32, border: '2px solid #ff2233', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, color: '#ff2233' }}>TL</div>
-          <span style={{ fontWeight: 700, fontSize: 20, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--white)' }}>TUNER<span style={{ color: '#ff2233' }}>LINK</span></span>
-        </Link>
-      </nav>
-
       <div style={{ maxWidth: 720, margin: '0 auto', padding: '64px 24px 96px' }}>
         <div className="label-tl">Get in Touch</div>
         <h1 style={{ fontWeight: 800, fontSize: 'clamp(40px, 6vw, 72px)', textTransform: 'uppercase', lineHeight: 0.92, marginBottom: 24 }}>

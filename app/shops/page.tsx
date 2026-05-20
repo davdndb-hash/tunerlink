@@ -85,23 +85,6 @@ export default function ShopsPage() {
   return (
     <div style={{ minHeight: '100vh', background: 'var(--black)', color: 'var(--white)' }}>
 
-      {/* NAV */}
-      <nav style={{ position: 'sticky', top: 0, zIndex: 500, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 52px', background: 'rgba(8,8,8,0.97)', backdropFilter: 'blur(16px)', borderBottom: '1px solid var(--border)' }}>
-        <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
-          <div style={{ width: 32, height: 32, border: '2px solid #ff2233', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, color: '#ff2233' }}>TL</div>
-          <span style={{ fontWeight: 700, fontSize: 20, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--white)' }}>TUNER<span style={{ color: '#ff2233' }}>LINK</span></span>
-        </Link>
-        <div style={{ display: 'flex', gap: 40 }}>
-          <Link href="/shops" className="nav-link" style={{ color: 'var(--white)' }}>Find a Shop</Link>
-          <Link href="/about" className="nav-link">About</Link>
-          <Link href="/list-shop" className="nav-link">List My Shop</Link>
-        </div>
-        <div style={{ display: 'flex', gap: 12 }}>
-          <Link href="/auth/login" className="btn-tl" style={{ padding: '10px 22px', fontSize: 11 }}>Sign In</Link>
-          <Link href="/list-shop" className="btn-tl btn-red" style={{ padding: '10px 22px', fontSize: 11 }}>List Your Shop</Link>
-        </div>
-      </nav>
-
       {/* HEADER */}
       <section style={{ padding: '64px 52px 40px', background: 'var(--dark)', borderBottom: '1px solid var(--border)' }}>
         <div className="label-tl">Shop Directory</div>

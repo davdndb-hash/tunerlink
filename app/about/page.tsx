@@ -6,20 +6,6 @@ export default function AboutPage() {
   return (
     <div style={{ minHeight: '100vh', background: 'var(--black)', color: 'var(--white)' }}>
 
-      {/* NAV */}
-      <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 52px', borderBottom: '1px solid var(--border)', background: 'rgba(8,8,8,0.97)', position: 'sticky', top: 0, zIndex: 500 }}>
-        <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
-          <div style={{ width: 32, height: 32, border: '2px solid #ff2233', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, color: '#ff2233' }}>TL</div>
-          <span style={{ fontWeight: 700, fontSize: 20, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--white)' }}>TUNER<span style={{ color: '#ff2233' }}>LINK</span></span>
-        </Link>
-        <div style={{ display: 'flex', gap: 40 }}>
-          <Link href="/shops" className="nav-link">Find a Shop</Link>
-          <Link href="/about" className="nav-link" style={{ color: 'var(--white)' }}>About</Link>
-          <Link href="/list-shop" className="nav-link">List My Shop</Link>
-        </div>
-        <Link href="/auth/signup" className="btn-tl btn-red" style={{ padding: '10px 22px', fontSize: 11 }}>Get Started</Link>
-      </nav>
-
       {/* HERO */}
       <section style={{ padding: '100px 52px 80px', background: 'var(--dark)', borderBottom: '1px solid var(--border)', position: 'relative', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse 60% 70% at 70% 40%, rgba(255,34,51,0.1), transparent)', pointerEvents: 'none' }} />

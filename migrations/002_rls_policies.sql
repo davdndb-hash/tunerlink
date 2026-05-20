@@ -162,3 +162,62 @@ create policy "customer_waitlist_self_read"
   on public.customer_waitlist for select
   to authenticated
   using (lower(email) = lower(auth.jwt() ->> 'email'));
+
+-- ---------------------------------------------------------------------------
+-- messages
+-- ---------------------------------------------------------------------------
+alter table public.messages enable row level security;
+
+-- Booking participants (customer or shop owner) can read the thread.
+drop policy if exists "messages_participant_read" on public.messages;
+create policy "messages_participant_read"
+  on public.messages for select
+  to authenticated
+  using (
+    booking_id in (
+      select id from public.bookings
+      where customer_id = auth.uid()
+         or shop_id in (select id from public.shops where owner_id = auth.uid())
+    )
+  );
+
+-- Sender must be part of the booking and must be writing as themselves.
+drop policy if exists "messages_participant_insert" on public.messages;
+create policy "messages_participant_insert"
+  on public.messages for insert
+  to authenticated
+  with check (
+    sender_id = auth.uid()
+    and booking_id in (
+      select id from public.bookings
+      where customer_id = auth.uid()
+         or shop_id in (select id from public.shops where owner_id = auth.uid())
+    )
+  );
+
+-- Messages are immutable — no update or delete for regular users.
+
+-- ---------------------------------------------------------------------------
+-- reviews
+-- ---------------------------------------------------------------------------
+alter table public.reviews enable row level security;
+
+-- Reviews are public (shown on shop profiles).
+drop policy if exists "reviews_public_read" on public.reviews;
+create policy "reviews_public_read"
+  on public.reviews for select
+  using (true);
+
+-- Only the customer who owns the booking can submit a review.
+drop policy if exists "reviews_customer_insert" on public.reviews;
+create policy "reviews_customer_insert"
+  on public.reviews for insert
+  to authenticated
+  with check (
+    customer_id = auth.uid()
+    and booking_id in (
+      select id from public.bookings where customer_id = auth.uid()
+    )
+  );
+
+-- Reviews are immutable once submitted.

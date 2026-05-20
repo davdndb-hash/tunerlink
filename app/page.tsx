@@ -1,18 +1,11 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import Link from 'next/link'
 
 export default function HomePage() {
-  const [scrolled, setScrolled] = useState(false)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const curRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40)
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
 
   useEffect(() => {
     const move = (e: MouseEvent) => {
@@ -83,23 +76,6 @@ export default function HomePage() {
       <canvas ref={canvasRef} style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0, opacity: .45 }} />
 
       <div style={{ position: 'relative', zIndex: 1, background: 'var(--black)', color: 'var(--white)' }}>
-
-        {/* NAV */}
-        <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 500, padding: scrolled ? '14px 52px' : '22px 52px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: scrolled ? 'rgba(8,8,8,.94)' : 'transparent', backdropFilter: scrolled ? 'blur(16px)' : 'none', borderBottom: scrolled ? '1px solid var(--border)' : '1px solid transparent', transition: 'all .3s' }}>
-          <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none', fontFamily: "'Bebas Neue',sans-serif", fontSize: 26, letterSpacing: '.12em', color: 'var(--white)' }}>
-            <div style={{ width: 32, height: 32, border: '2px solid #ff2233', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, color: '#ff2233', fontFamily: 'monospace' }}>TL</div>
-            TUNER<em style={{ fontStyle: 'normal', color: '#ff2233' }}>LINK</em>
-          </Link>
-          <ul style={{ display: 'flex', gap: 40, listStyle: 'none', padding: 0 }}>
-          {[['Shops', '/shops'], ['Dyno Pulls', '/dinos'], ['Features', '/features'], ['About', '/about'], ['List My Shop', '/list-shop'], ['For Owners', '/b2c'], ['For Shops', '/b2b']].map(([l, h]) => (
-              <li key={l}><Link href={h} className="nav-link">{l}</Link></li>
-            ))}
-          </ul>
-          <div style={{ display: 'flex', gap: 12 }}>
-            <Link href="/shops" className="btn-tl" style={{ padding: '11px 26px', fontSize: 11 }}>Find a Tuner</Link>
-            <Link href="/list-shop" className="btn-tl btn-red" style={{ padding: '11px 26px', fontSize: 11 }}>List Your Shop</Link>
-          </div>
-        </nav>
 
         {/* HERO */}
         <section style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', padding: '0 52px 80px', position: 'relative', overflow: 'hidden' }}>

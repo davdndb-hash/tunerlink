@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
-import { Rajdhani, Share_Tech_Mono } from 'next/font/google'
+import { Rajdhani, Share_Tech_Mono, Bebas_Neue } from 'next/font/google'
 import './globals.css'
+import Nav from './components/Nav'
 
 const rajdhani = Rajdhani({
   subsets: ['latin'],
@@ -12,6 +13,12 @@ const mono = Share_Tech_Mono({
   subsets: ['latin'],
   weight: ['400'],
   variable: '--font-mono',
+})
+
+const bebas = Bebas_Neue({
+  subsets: ['latin'],
+  weight: ['400'],
+  variable: '--font-display',
 })
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_APP_URL || 'https://tunerlink.com'
@@ -85,7 +92,8 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${rajdhani.variable} ${mono.variable}`} style={{ fontFamily: 'var(--font-body), sans-serif' }}>
+      <body className={`${rajdhani.variable} ${mono.variable} ${bebas.variable}`} style={{ fontFamily: 'var(--font-body), sans-serif' }}>
+        <Nav />
         {children}
       </body>
     </html>

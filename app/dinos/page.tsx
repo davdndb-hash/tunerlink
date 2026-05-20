@@ -69,19 +69,6 @@ export default function DinosPage() {
   return (
     <div style={{ minHeight: '100vh', background: 'var(--black)', color: 'var(--white)' }}>
 
-      <nav style={{ position: 'sticky', top: 0, zIndex: 500, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 52px', background: 'rgba(8,8,8,0.97)', backdropFilter: 'blur(16px)', borderBottom: '1px solid var(--border)' }}>
-        <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
-          <div style={{ width: 32, height: 32, border: '2px solid #ff2233', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, color: '#ff2233' }}>TL</div>
-          <span style={{ fontWeight: 700, fontSize: 20, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--white)' }}>TUNER<span style={{ color: '#ff2233' }}>LINK</span></span>
-        </Link>
-        <div style={{ display: 'flex', gap: 40 }}>
-          <Link href="/shops" className="nav-link">Tuners</Link>
-          <Link href="/dinos" className="nav-link" style={{ color: 'var(--white)' }}>Dyno Pulls</Link>
-          <Link href="/list-shop" className="nav-link">List My Shop</Link>
-        </div>
-        <Link href="/auth/login" className="btn-tl" style={{ padding: '10px 22px', fontSize: 11 }}>Sign In</Link>
-      </nav>
-
       <section style={{ padding: '80px 52px 48px', borderBottom: '1px solid var(--border)' }}>
         <div className="label-tl">Dyno Pulls</div>
         <h1 style={{ fontWeight: 800, fontSize: 'clamp(48px, 8vw, 110px)', textTransform: 'uppercase', lineHeight: 0.9, marginBottom: 24 }}>
