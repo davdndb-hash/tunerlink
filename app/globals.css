@@ -15,12 +15,13 @@
 }
 
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; font-size: 18px; }
 body {
   background: var(--black);
   color: var(--white);
   overflow-x: hidden;
-  font-size:17px;
+  font-size: 19px;
+  font-weight: 500;
 }
 
 .btn-tl {
@@ -53,7 +54,7 @@ body {
   background: var(--panel);
   border: 1px solid var(--border);
   color: var(--white);
-  font-size: 14px;
+  font-size: 16px;
   padding: 12px 16px;
   outline: none;
   transition: border-color 0.2s;
