@@ -130,8 +130,8 @@ export async function POST(req: NextRequest) {
         customer_id: booking.customer_id,
         kind,
       },
-      success_url: `${siteUrl()}/dashboard/bookings?paid=${booking.id}`,
-      cancel_url: `${siteUrl()}/dashboard/bookings?cancelled=${booking.id}`,
+      success_url: `${siteUrl()}/dashboard/bookings/${booking.id}?paid=${booking.id}`,
+      cancel_url: `${siteUrl()}/dashboard/bookings/${booking.id}?cancelled=${booking.id}`,
     })
 
     return NextResponse.json({ url: session.url, id: session.id })

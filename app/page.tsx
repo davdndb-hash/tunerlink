@@ -91,7 +91,7 @@ export default function HomePage() {
             TUNER<em style={{ fontStyle: 'normal', color: '#ff2233' }}>LINK</em>
           </Link>
           <ul style={{ display: 'flex', gap: 40, listStyle: 'none', padding: 0 }}>
-          {[['Shops', '/shops'], ['Features', '/features'], ['About', '/about'], ['List My Shop', '/list-shop'], ['For Owners', '/b2c'], ['For Shops', '/b2b']].map(([l, h]) => (
+          {[['Shops', '/shops'], ['Dyno Pulls', '/dinos'], ['Features', '/features'], ['About', '/about'], ['List My Shop', '/list-shop'], ['For Owners', '/b2c'], ['For Shops', '/b2b']].map(([l, h]) => (
               <li key={l}><Link href={h} className="nav-link">{l}</Link></li>
             ))}
           </ul>
@@ -121,6 +121,7 @@ export default function HomePage() {
             </p>
             <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
               <Link href="/shops" className="btn-tl btn-red" style={{ padding: '16px 44px', fontSize: 12 }}>I Need a Tuner</Link>
+              <Link href="/dinos" className="btn-tl" style={{ padding: '16px 44px', fontSize: 12 }}>Book a Dyno</Link>
               <Link href="/list-shop" className="btn-tl" style={{ padding: '16px 44px', fontSize: 12 }}>List My Business</Link>
             </div>
             <div style={{ display: 'flex', borderTop: '1px solid var(--border)', marginTop: 64 }}>

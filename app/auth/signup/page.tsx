@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 
@@ -12,18 +12,45 @@ export default function SignupPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
+  const [claimId, setClaimId] = useState<string | null>(null)
+
+  // Seed form state from ?email=&claim= query params (approval-email link).
+  // If the user is already signed in with a ?claim= present, short-circuit
+  // straight to the dashboard so the auto-claim handler runs — no reason to
+  // show them a signup form they don't need.
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const url = new URL(window.location.href)
+    const qEmail = url.searchParams.get('email')
+    const qClaim = url.searchParams.get('claim')
+    if (qEmail) setEmail(qEmail)
+    if (qClaim) {
+      setClaimId(qClaim)
+      setRole('shop')
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session?.user) {
+          window.location.replace(`/dashboard?claim=${encodeURIComponent(qClaim)}`)
+        }
+      })
+    }
+  }, [])
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError('')
 
+    // Carry the claim id through the email-confirmation round-trip so the
+    // dashboard can auto-claim the shop on first load.
+    const redirect = new URL(`${window.location.origin}/dashboard`)
+    if (claimId) redirect.searchParams.set('claim', claimId)
+
     const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: { full_name: fullName, role },
-        emailRedirectTo: `${window.location.origin}/dashboard`,
+        emailRedirectTo: redirect.toString(),
       },
     })
 
@@ -36,9 +63,11 @@ export default function SignupPage() {
   }
 
   const handleGoogle = async () => {
+    const redirect = new URL(`${window.location.origin}/dashboard`)
+    if (claimId) redirect.searchParams.set('claim', claimId)
     await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: `${window.location.origin}/dashboard` },
+      options: { redirectTo: redirect.toString() },
     })
   }
 

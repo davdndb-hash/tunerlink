@@ -94,7 +94,7 @@ export default function MessagesPage() {
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 1, background: 'var(--border)', border: '1px solid var(--border)' }}>
             {threads.map(t => (
-              <Link key={t.booking_id} href={`/dashboard/bookings?thread=${t.booking_id}`} style={{ textDecoration: 'none', color: 'inherit', background: 'var(--dark)', padding: '20px 28px', display: 'grid', gridTemplateColumns: '1fr 3fr auto', gap: 24 }}>
+              <Link key={t.booking_id} href={`/dashboard/bookings/${t.booking_id}`} style={{ textDecoration: 'none', color: 'inherit', background: 'var(--dark)', padding: '20px 28px', display: 'grid', gridTemplateColumns: '1fr 3fr auto', gap: 24 }}>
                 <div style={{ fontWeight: 700, fontSize: 14, textTransform: 'uppercase' }}>{t.shop_name || t.customer_name || 'Thread'}</div>
                 <div style={{ color: 'var(--grey)', fontSize: 13, lineHeight: 1.6, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {t.last_message?.content || 'No messages yet'}

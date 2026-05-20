@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { sendWaitlistWelcome } from '@/lib/email'
 import { supabaseAdmin } from '@/lib/supabase-admin'
+import { rateLimit, getClientIp } from '@/lib/rate-limit'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
+
+const limit = rateLimit({ windowMs: 60_000, max: 10, name: 'email-waitlist' })
 
 /**
  * POST /api/email/waitlist
@@ -13,6 +16,15 @@ export const dynamic = 'force-dynamic'
  * then sends the welcome email.
  */
 export async function POST(req: NextRequest) {
+  const ip = getClientIp(req)
+  const { ok, retryAfter } = limit(ip)
+  if (!ok) {
+    return NextResponse.json(
+      { error: 'Too many requests' },
+      { status: 429, headers: { 'Retry-After': String(retryAfter) } },
+    )
+  }
+
   try {
     const { email } = await req.json()
     if (!email || typeof email !== 'string') {

@@ -1,9 +1,17 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import { useParams, useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
+
+type Message = {
+  id: string
+  booking_id: string
+  sender_id: string
+  content: string | null
+  created_at: string
+}
 
 type BookingDetail = {
   id: string
@@ -42,6 +50,18 @@ export default function BookingDetailPage() {
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
   const [actionMessage, setActionMessage] = useState('')
+  const [messages, setMessages] = useState<Message[]>([])
+  const [draft, setDraft] = useState('')
+  const [sendingMsg, setSendingMsg] = useState(false)
+  const messagesEndRef = useRef<HTMLDivElement | null>(null)
+
+  // Review state — only relevant for completed bookings where user is the customer
+  const [review, setReview] = useState<{ id: string; rating: number; content: string | null; created_at: string } | null>(null)
+  const [reviewLoaded, setReviewLoaded] = useState(false)
+  const [reviewRating, setReviewRating] = useState(5)
+  const [reviewContent, setReviewContent] = useState('')
+  const [submittingReview, setSubmittingReview] = useState(false)
+  const [reviewError, setReviewError] = useState<string | null>(null)
 
   const load = useCallback(async () => {
     const { data: { session } } = await supabase.auth.getSession()
@@ -84,6 +104,108 @@ export default function BookingDetailPage() {
     load()
   }, [load])
 
+  // Load messages + subscribe to new inserts
+  useEffect(() => {
+    if (!bookingId || !userId) return
+    let ignore = false
+
+    const loadMessages = async () => {
+      const { data } = await supabase
+        .from('messages')
+        .select('id, booking_id, sender_id, content, created_at')
+        .eq('booking_id', bookingId)
+        .order('created_at', { ascending: true })
+      if (!ignore) setMessages((data as Message[]) || [])
+    }
+    loadMessages()
+
+    // Realtime: listen for new rows scoped to this booking
+    const channel = supabase
+      .channel(`booking_messages_${bookingId}`)
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'messages', filter: `booking_id=eq.${bookingId}` },
+        (payload) => {
+          setMessages((prev) => {
+            const next = payload.new as Message
+            if (prev.some((m) => m.id === next.id)) return prev
+            return [...prev, next]
+          })
+        },
+      )
+      .subscribe()
+
+    return () => {
+      ignore = true
+      supabase.removeChannel(channel)
+    }
+  }, [bookingId, userId])
+
+  // Auto-scroll when new message lands
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages.length])
+
+  // Load any existing review for this booking
+  useEffect(() => {
+    if (!bookingId) return
+    let ignore = false
+    supabase
+      .from('reviews')
+      .select('id, rating, content, created_at')
+      .eq('booking_id', bookingId)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (ignore) return
+        if (data) setReview(data as any)
+        setReviewLoaded(true)
+      })
+    return () => { ignore = true }
+  }, [bookingId])
+
+  async function submitReview() {
+    if (!userId || !booking) return
+    setSubmittingReview(true)
+    setReviewError(null)
+    const { data, error } = await supabase
+      .from('reviews')
+      .insert({
+        booking_id: booking.id,
+        shop_id: booking.shop_id,
+        customer_id: userId,
+        rating: reviewRating,
+        content: reviewContent.trim() || null,
+      })
+      .select('id, rating, content, created_at')
+      .single()
+    if (error) {
+      setReviewError(error.message)
+    } else if (data) {
+      setReview(data as any)
+    }
+    setSubmittingReview(false)
+  }
+
+  async function sendMessage() {
+    const text = draft.trim()
+    if (!text || !userId || sendingMsg) return
+    setSendingMsg(true)
+    try {
+      const { error } = await supabase.from('messages').insert({
+        booking_id: bookingId,
+        sender_id: userId,
+        content: text,
+      })
+      if (error) {
+        setActionMessage(`✗ ${error.message}`)
+      } else {
+        setDraft('')
+      }
+    } finally {
+      setSendingMsg(false)
+    }
+  }
+
   const isCustomer = userId && booking && booking.customer_id === userId
   const isShopOwner = userId && booking?.shop && booking.shop.owner_id === userId
   const status = booking?.status || 'pending'
@@ -112,7 +234,7 @@ export default function BookingDetailPage() {
     }
   }
 
-  async function payDeposit() {
+  async function startCheckout(kind: 'deposit' | 'final' | 'full') {
     if (!accessToken) return
     setBusy(true)
     setActionMessage('')
@@ -120,7 +242,7 @@ export default function BookingDetailPage() {
       const res = await fetch('/api/stripe/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${accessToken}` },
-        body: JSON.stringify({ bookingId, kind: 'deposit' }),
+        body: JSON.stringify({ bookingId, kind }),
       })
       const json = await res.json()
       if (!res.ok) {
@@ -134,6 +256,9 @@ export default function BookingDetailPage() {
       setBusy(false)
     }
   }
+
+  const payDeposit = () => startCheckout('deposit')
+  const payFinal = () => startCheckout('final')
 
   if (loading) {
     return (
@@ -328,9 +453,23 @@ export default function BookingDetailPage() {
 
               {/* Customer actions */}
               {isCustomer && status === 'pending' && (
-                <div style={{ color: 'var(--grey)', fontSize: 12, lineHeight: 1.6, padding: '8px 0' }}>
-                  ⏳ Waiting for the shop to respond. They typically reply within a business day.
-                </div>
+                <>
+                  <div style={{ color: 'var(--grey)', fontSize: 12, lineHeight: 1.6, padding: '8px 0', marginBottom: 10 }}>
+                    ⏳ Waiting for the shop to respond. They typically reply within a business day.
+                  </div>
+                  <button
+                    className="btn-tl"
+                    style={{ width: '100%', padding: '12px', fontSize: 11, opacity: busy ? 0.6 : 1 }}
+                    disabled={busy}
+                    onClick={() => {
+                      if (!confirm('Cancel this booking request? The shop will be notified.')) return
+                      const reason = window.prompt('Optional: tell the shop why (or leave blank).') || undefined
+                      changeStatus('cancelled', reason)
+                    }}
+                  >
+                    Cancel request
+                  </button>
+                </>
               )}
 
               {isCustomer && status === 'accepted' && !booking.deposit_paid && (
@@ -338,17 +477,29 @@ export default function BookingDetailPage() {
                   {booking.shop?.stripe_charges_enabled ? (
                     <button
                       className="btn-tl btn-red"
-                      style={{ width: '100%', padding: '14px', fontSize: 11, opacity: busy ? 0.6 : 1 }}
+                      style={{ width: '100%', padding: '14px', fontSize: 11, marginBottom: 10, opacity: busy ? 0.6 : 1 }}
                       disabled={busy}
                       onClick={payDeposit}
                     >
                       {busy ? 'Opening checkout…' : `Pay $${deposit.toFixed(2)} deposit`}
                     </button>
                   ) : (
-                    <div style={{ background: 'rgba(255,170,0,0.06)', border: '1px solid rgba(255,170,0,0.25)', padding: 10, color: '#ffaa00', fontSize: 11, lineHeight: 1.5 }}>
+                    <div style={{ background: 'rgba(255,170,0,0.06)', border: '1px solid rgba(255,170,0,0.25)', padding: 10, color: '#ffaa00', fontSize: 11, lineHeight: 1.5, marginBottom: 10 }}>
                       This shop hasn&rsquo;t finished Stripe Connect onboarding. Reach out directly to arrange payment.
                     </div>
                   )}
+                  <button
+                    className="btn-tl"
+                    style={{ width: '100%', padding: '12px', fontSize: 11, opacity: busy ? 0.6 : 1 }}
+                    disabled={busy}
+                    onClick={() => {
+                      if (!confirm('Cancel this booking? You haven\u2019t paid the deposit yet, so no charge applies.')) return
+                      const reason = window.prompt('Optional: tell the shop why (or leave blank).') || undefined
+                      changeStatus('cancelled', reason)
+                    }}
+                  >
+                    Cancel booking
+                  </button>
                 </>
               )}
 
@@ -356,6 +507,31 @@ export default function BookingDetailPage() {
                 <div style={{ color: '#1D9E75', fontSize: 12, lineHeight: 1.6, padding: '8px 0' }}>
                   ✓ Deposit confirmed. The shop will reach out about scheduling.
                 </div>
+              )}
+
+              {isCustomer && status === 'in_progress' && (
+                <div style={{ color: '#5096ff', fontSize: 12, lineHeight: 1.6, padding: '8px 0' }}>
+                  🔧 Work is in progress. The shop will mark this complete when finished.
+                </div>
+              )}
+
+              {isCustomer && status === 'completed' && !booking.final_paid && remaining > 0 && (
+                <>
+                  {booking.shop?.stripe_charges_enabled ? (
+                    <button
+                      className="btn-tl btn-red"
+                      style={{ width: '100%', padding: '14px', fontSize: 11, opacity: busy ? 0.6 : 1 }}
+                      disabled={busy}
+                      onClick={payFinal}
+                    >
+                      {busy ? 'Opening checkout…' : `Pay $${remaining.toFixed(2)} remaining`}
+                    </button>
+                  ) : (
+                    <div style={{ background: 'rgba(255,170,0,0.06)', border: '1px solid rgba(255,170,0,0.25)', padding: 10, color: '#ffaa00', fontSize: 11, lineHeight: 1.5 }}>
+                      Final payment to be settled directly with the shop.
+                    </div>
+                  )}
+                </>
               )}
 
               {status === 'declined' && (
@@ -368,9 +544,15 @@ export default function BookingDetailPage() {
                 <div style={{ color: 'var(--grey)', fontSize: 12, lineHeight: 1.6, padding: '8px 0' }}>This booking was cancelled.</div>
               )}
 
-              {status === 'completed' && (
+              {status === 'completed' && booking.final_paid && (
                 <div style={{ color: '#1D9E75', fontSize: 12, lineHeight: 1.6, padding: '8px 0' }}>
-                  ✓ Completed{booking.completed_at ? ` on ${new Date(booking.completed_at).toLocaleDateString('en-US')}` : ''}.
+                  ✓ Completed{booking.completed_at ? ` on ${new Date(booking.completed_at).toLocaleDateString('en-US')}` : ''} &middot; paid in full.
+                </div>
+              )}
+
+              {status === 'completed' && !booking.final_paid && !isCustomer && (
+                <div style={{ color: '#1D9E75', fontSize: 12, lineHeight: 1.6, padding: '8px 0' }}>
+                  ✓ Completed{booking.completed_at ? ` on ${new Date(booking.completed_at).toLocaleDateString('en-US')}` : ''}. Awaiting customer&rsquo;s final payment.
                 </div>
               )}
 
@@ -385,6 +567,156 @@ export default function BookingDetailPage() {
               Booking ID: <code style={{ fontFamily: 'var(--font-mono), monospace' }}>{booking.id.slice(0, 8)}</code><br />
               Created {new Date(booking.created_at).toLocaleString('en-US')}
             </div>
+          </div>
+        </div>
+
+        {/* Review section — only for the customer, only after completion */}
+        {isCustomer && status === 'completed' && reviewLoaded && (
+          <div style={{ marginTop: 40, background: 'var(--dark)', border: '1px solid var(--border)' }}>
+            <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)', fontFamily: 'var(--font-mono), monospace', fontSize: 10, letterSpacing: '0.28em', color: 'var(--grey)', textTransform: 'uppercase' }}>
+              Review
+            </div>
+            <div style={{ padding: 24 }}>
+              {review ? (
+                <div>
+                  <div style={{ fontSize: 22, marginBottom: 8, letterSpacing: 2 }}>
+                    {'★'.repeat(review.rating)}<span style={{ color: 'var(--border)' }}>{'★'.repeat(5 - review.rating)}</span>
+                  </div>
+                  {review.content && <div style={{ color: 'var(--lgrey)', lineHeight: 1.7, marginBottom: 8 }}>{review.content}</div>}
+                  <div style={{ fontFamily: 'var(--font-mono), monospace', fontSize: 10, color: 'var(--grey)', letterSpacing: '0.15em', textTransform: 'uppercase' }}>
+                    Posted {new Date(review.created_at).toLocaleDateString()}
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <div style={{ color: 'var(--lgrey)', fontSize: 14, lineHeight: 1.7, marginBottom: 16 }}>
+                    How was your experience with {booking.shop?.name || 'this shop'}? Your review helps other enthusiasts pick the right shop.
+                  </div>
+                  <div style={{ display: 'flex', gap: 6, marginBottom: 16 }}>
+                    {[1, 2, 3, 4, 5].map((n) => (
+                      <button
+                        key={n}
+                        type="button"
+                        onClick={() => setReviewRating(n)}
+                        style={{
+                          background: 'transparent',
+                          border: 'none',
+                          cursor: 'pointer',
+                          fontSize: 32,
+                          lineHeight: 1,
+                          color: n <= reviewRating ? '#ffcf66' : 'var(--border)',
+                          padding: 0,
+                          transition: 'transform 0.1s',
+                        }}
+                        aria-label={`${n} star${n === 1 ? '' : 's'}`}
+                      >
+                        ★
+                      </button>
+                    ))}
+                  </div>
+                  <textarea
+                    className="input-tl"
+                    rows={4}
+                    placeholder="What went well? Any issues? (optional)"
+                    value={reviewContent}
+                    onChange={e => setReviewContent(e.target.value)}
+                    style={{ resize: 'vertical', minHeight: 100, fontFamily: 'inherit', marginBottom: 12 }}
+                  />
+                  {reviewError && (
+                    <div style={{ padding: '10px 14px', border: '1px solid #ff2233', background: 'rgba(255,34,51,0.08)', fontSize: 12, color: '#ff6677', marginBottom: 12 }}>
+                      {reviewError}
+                    </div>
+                  )}
+                  <button
+                    type="button"
+                    onClick={submitReview}
+                    disabled={submittingReview}
+                    className="btn-tl btn-red"
+                    style={{ padding: '12px 28px', fontSize: 11, opacity: submittingReview ? 0.6 : 1 }}
+                  >
+                    {submittingReview ? 'Posting…' : 'Post Review'}
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Thread */}
+        <div style={{ marginTop: 40, background: 'var(--dark)', border: '1px solid var(--border)' }}>
+          <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)', fontFamily: 'var(--font-mono), monospace', fontSize: 10, letterSpacing: '0.28em', color: 'var(--grey)', textTransform: 'uppercase' }}>
+            Conversation
+          </div>
+          <div style={{ padding: 20, maxHeight: 420, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {messages.length === 0 ? (
+              <div style={{ color: 'var(--grey)', fontSize: 13, textAlign: 'center', padding: '32px 0', lineHeight: 1.7 }}>
+                No messages yet. {isCustomer ? 'Send the shop a quick note — ask about scheduling, prep, or questions.' : 'Send the customer an update — confirm prep, request photos, or give a heads-up on timing.'}
+              </div>
+            ) : (
+              messages.map((m) => {
+                const mine = m.sender_id === userId
+                return (
+                  <div key={m.id} style={{ display: 'flex', justifyContent: mine ? 'flex-end' : 'flex-start' }}>
+                    <div
+                      style={{
+                        maxWidth: '75%',
+                        background: mine ? '#1a1a1a' : '#0e0e0e',
+                        border: `1px solid ${mine ? 'rgba(255,34,51,0.35)' : 'var(--border)'}`,
+                        color: 'var(--white)',
+                        padding: '10px 14px',
+                        fontSize: 14,
+                        lineHeight: 1.6,
+                        whiteSpace: 'pre-wrap',
+                        wordBreak: 'break-word',
+                      }}
+                    >
+                      <div>{m.content}</div>
+                      <div style={{ fontFamily: 'var(--font-mono), monospace', fontSize: 9, letterSpacing: '0.15em', color: 'var(--grey)', marginTop: 6, textTransform: 'uppercase' }}>
+                        {new Date(m.created_at).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}
+                      </div>
+                    </div>
+                  </div>
+                )
+              })
+            )}
+            <div ref={messagesEndRef} />
+          </div>
+          <div style={{ borderTop: '1px solid var(--border)', padding: 16, display: 'flex', gap: 8 }}>
+            <textarea
+              value={draft}
+              onChange={(e) => setDraft(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+                  e.preventDefault()
+                  sendMessage()
+                }
+              }}
+              placeholder={`Message the ${isCustomer ? 'shop' : 'customer'}...`}
+              rows={2}
+              style={{
+                flex: 1,
+                background: '#080808',
+                border: '1px solid var(--border)',
+                color: 'var(--white)',
+                padding: 12,
+                fontSize: 14,
+                lineHeight: 1.6,
+                fontFamily: 'inherit',
+                resize: 'vertical',
+                minHeight: 44,
+              }}
+            />
+            <button
+              className="btn-tl btn-red"
+              style={{ padding: '12px 24px', fontSize: 11, opacity: sendingMsg || !draft.trim() ? 0.5 : 1, alignSelf: 'flex-end', cursor: sendingMsg || !draft.trim() ? 'not-allowed' : 'pointer' }}
+              disabled={sendingMsg || !draft.trim()}
+              onClick={sendMessage}
+            >
+              {sendingMsg ? 'Sending…' : 'Send'}
+            </button>
+          </div>
+          <div style={{ padding: '0 16px 16px', fontSize: 10, color: 'var(--grey)', fontFamily: 'var(--font-mono), monospace', letterSpacing: '0.15em' }}>
+            Cmd/Ctrl + Enter to send
           </div>
         </div>
       </div>

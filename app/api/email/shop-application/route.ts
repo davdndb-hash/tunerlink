@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { sendShopApplicationReceived, notifyAdminNewApplication } from '@/lib/email'
 import { supabaseAdmin } from '@/lib/supabase-admin'
+import { rateLimit, getClientIp } from '@/lib/rate-limit'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
+
+const limit = rateLimit({ windowMs: 60_000, max: 5, name: 'email-shop-application' })
 
 /**
  * POST /api/email/shop-application
@@ -14,6 +17,15 @@ export const dynamic = 'force-dynamic'
  *   2. notification to the platform admin
  */
 export async function POST(req: NextRequest) {
+  const ip = getClientIp(req)
+  const { ok, retryAfter } = limit(ip)
+  if (!ok) {
+    return NextResponse.json(
+      { error: 'Too many requests' },
+      { status: 429, headers: { 'Retry-After': String(retryAfter) } },
+    )
+  }
+
   try {
     const { email } = await req.json()
     if (!email) return NextResponse.json({ error: 'Email required' }, { status: 400 })

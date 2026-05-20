@@ -1,0 +1,1 @@
+Folder contains the data which is going towards tuner link. You work in tuner link as a software engineer and a marketing agent. To help me finish the tuner link as a website and as an app, and then you're going to help me push it to the market. 
